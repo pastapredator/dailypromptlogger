@@ -90,7 +90,7 @@
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ prompt: fullPrompt })
                 });
@@ -102,10 +102,10 @@
                         document.getElementById('userInput').value = ''; // Clear the input
                         promptSelect.selectedIndex = 0; // Reset dropdown
                     } else {
-                        throw new Error('Failed to submit prompt.');
+                        throw new Error(result.message || 'Failed to submit prompt.');
                     }
                 } else {
-                    throw new Error('Error submitting prompt.');
+                    throw new Error('Error submitting prompt: ' + response.statusText);
                 }
             } catch (error) {
                 document.getElementById('messageContainer').innerHTML = `<div class="error-message">${error.message}</div>`;
