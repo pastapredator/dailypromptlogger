@@ -10,6 +10,8 @@
         input, textarea, select, button { margin-top: 10px; padding: 10px; width: 100%; }
         button { background-color: #007BFF; color: white; border: none; cursor: pointer; }
         button:hover { background-color: #0056b3; }
+        .success-message { color: green; margin-top: 20px; }
+        .error-message { color: red; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -25,25 +27,23 @@
             <option value="Describe a moment that made you smile recently.">Describe a moment that made you smile recently.</option>
         </select>
 
-        <label for="userInput">Your thoughts (150-200 characters):</label>
+        <label for="userInput">Your thoughts:</label>
         <textarea id="userInput" rows="4" required placeholder="Type your response here..."></textarea>
         
         <button type="submit">Submit Prompt</button>
     </form>
 
+    <div id="messageContainer"></div>
+
     <script>
         const form = document.getElementById('promptForm');
+        const messageContainer = document.getElementById('messageContainer');
 
         form.addEventListener('submit', function (event) {
             event.preventDefault(); // Prevent default form submission
 
             const prompt = document.getElementById('promptSelect').value;
             const userInput = document.getElementById('userInput').value;
-
-            if (userInput.length < 150 || userInput.length > 200) {
-                alert('Please ensure your response is between 150 and 200 characters.');
-                return;
-            }
 
             // Combine the selected prompt with user input
             const completeInput = `${prompt} ${userInput}`;
@@ -55,20 +55,26 @@
         async function submitPrompt(prompt) {
             const url = 'YOUR_CLOUD_FUNCTION_OR_API_ENDPOINT'; // Replace with your endpoint
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ prompt: prompt })
-            });
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
 
-            if (response.ok) {
-                alert('Prompt submitted successfully!');
-                document.getElementById('userInput').value = ''; // Clear the input
-                document.getElementById('promptSelect').selectedIndex = 0; // Reset dropdown
-            } else {
-                alert('Error submitting prompt.');
+                if (response.ok) {
+                    // Display success message
+                    messageContainer.innerHTML = '<div class="success-message">Prompt submitted successfully!</div>';
+                    document.getElementById('userInput').value = ''; // Clear the input
+                    document.getElementById('promptSelect').selectedIndex = 0; // Reset dropdown
+                } else {
+                    throw new Error('Error submitting prompt.');
+                }
+            } catch (error) {
+                // Display error message
+                messageContainer.innerHTML = `<div class="error-message">${error.message}</div>`;
             }
         }
     </script>
