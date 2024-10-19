@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Prompt Journal</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        textarea {
+            width: 80%;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        .message {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+        .success-message {
+            color: green;
+        }
+        .error-message {
+            color: red;
+        }
+        select {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daily Prompt Journal</h1>
+    <form id="promptForm" onsubmit="event.preventDefault(); submitPrompt();">
+        <label for="promptSelect">Select a Prompt:</label>
+        <select id="promptSelect" required>
+            <option value="">--Choose a prompt--</option>
+            <option value="What made you smile today?">What made you smile today?</option>
+            <option value="What is something you're grateful for?">What is something you're grateful for?</option>
+            <option value="What did you learn today?">What did you learn today?</option>
+            <option value="What challenge did you overcome?">What challenge did you overcome?</option>
+            <option value="What are you looking forward to?">What are you looking forward to?</option>
+        </select>
+        <textarea id="userInput" placeholder="Type your thoughts here..." required></textarea>
+        <button type="submit">Submit</button>
+        <div id="messageContainer" class="message"></div>
+    </form>
+
+    <script>
+        async function submitPrompt() {
+            const prompt = document.getElementById('userInput').value;
+            const promptSelect = document.getElementById('promptSelect');
+            const selectedPrompt = promptSelect.options[promptSelect.selectedIndex].value;
+            const fullPrompt = selectedPrompt + " " + prompt; // Combine selected prompt and user input
+            const url = 'https://script.google.com/macros/s/AKfycbwNQau1UDH6_ACfQ235HxT-A9RunQS9KfwNE_g9iPX6jnyazwFqlY7U_5TXZipin9zZ/exec'; // Replace with your Google Apps Script URL
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt: fullPrompt })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.result === 'success') {
+                        document.getElementById('messageContainer').innerHTML = '<div class="success-message">Prompt submitted successfully!</div>';
+                        document.getElementById('userInput').value = ''; // Clear the input
+                        promptSelect.selectedIndex = 0; // Reset dropdown
+                    } else {
+                        throw new Error('Failed to submit prompt.');
+                    }
+                } else {
+                    throw new Error('Error submitting prompt.');
+                }
+            } catch (error) {
+                document.getElementById('messageContainer').innerHTML = `<div class="error-message">${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
