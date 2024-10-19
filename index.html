@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Prompt Logger</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+        form { margin: 20px; padding: 20px; background-color: white; border-radius: 5px; }
+        input, textarea, select, button { margin-top: 10px; padding: 10px; width: 100%; }
+        button { background-color: #007BFF; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Daily Prompt Logger</h1>
+    <form id="promptForm">
+        <label for="promptSelect">Choose a prompt:</label>
+        <select id="promptSelect" required>
+            <option value="">--Select a prompt--</option>
+            <option value="What are you grateful for today?">What are you grateful for today?</option>
+            <option value="What was a challenge you faced recently?">What was a challenge you faced recently?</option>
+            <option value="What did you learn today?">What did you learn today?</option>
+            <option value="What are your goals for tomorrow?">What are your goals for tomorrow?</option>
+            <option value="Describe a moment that made you smile recently.">Describe a moment that made you smile recently.</option>
+        </select>
+
+        <label for="userInput">Your thoughts (150-200 characters):</label>
+        <textarea id="userInput" rows="4" required placeholder="Type your response here..."></textarea>
+        
+        <button type="submit">Submit Prompt</button>
+    </form>
+
+    <script>
+        const form = document.getElementById('promptForm');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const prompt = document.getElementById('promptSelect').value;
+            const userInput = document.getElementById('userInput').value;
+
+            if (userInput.length < 150 || userInput.length > 200) {
+                alert('Please ensure your response is between 150 and 200 characters.');
+                return;
+            }
+
+            // Combine the selected prompt with user input
+            const completeInput = `${prompt} ${userInput}`;
+
+            // Call your Google Sheets API function here
+            submitPrompt(completeInput);
+        });
+
+        async function submitPrompt(prompt) {
+            const url = 'YOUR_CLOUD_FUNCTION_OR_API_ENDPOINT'; // Replace with your endpoint
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            if (response.ok) {
+                alert('Prompt submitted successfully!');
+                document.getElementById('userInput').value = ''; // Clear the input
+                document.getElementById('promptSelect').selectedIndex = 0; // Reset dropdown
+            } else {
+                alert('Error submitting prompt.');
+            }
+        }
+    </script>
+</body>
+</html>
