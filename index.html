@@ -33,7 +33,7 @@
         }
         button {
             padding: 10px 20px;
-            background-color: #555;
+            background-color: pink; /* Change button color to pink */
             color: white;
             border: none;
             border-radius: 5px;
@@ -41,7 +41,7 @@
             transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #777;
+            background-color: #ff69b4; /* Lighter pink on hover */
         }
         .message {
             margin-top: 10px;
@@ -93,10 +93,7 @@
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ prompt: fullPrompt })
+                    body: JSON.stringify({ prompt: fullPrompt }) // Removed Content-Type
                 });
 
                 const result = await response.json();
