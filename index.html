@@ -11,7 +11,7 @@
             color: #333;
             margin: 0;
             padding: 20px;
-            width: 300px; /* Adjust width for the popup */
+            width: 300px;
         }
         h1 {
             text-align: center;
@@ -24,7 +24,7 @@
             margin: 20px 0;
         }
         textarea {
-            width: 100%; /* Full width */
+            width: 100%;
             height: 100px;
             padding: 10px;
             margin-bottom: 10px;
@@ -33,7 +33,7 @@
         }
         button {
             padding: 10px 20px;
-            background-color: green; /* Changed button to blue */
+            background-color: blue;
             color: white;
             border: none;
             border-radius: 5px;
@@ -54,7 +54,7 @@
             color: red;
         }
         select {
-            width: 100%; /* Full width */
+            width: 100%;
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
@@ -80,39 +80,34 @@
     </form>
 
     <script>
-      async function submitPrompt() {
-    const prompt = document.getElementById('userInput').value;
-    const promptSelect = document.getElementById('promptSelect');
-    const selectedPrompt = promptSelect.options[promptSelect.selectedIndex].value;
-    const fullPrompt = selectedPrompt + " " + prompt; // Combine selected prompt and user input
-    const url = 'https://script.google.com/macros/s/AKfycbwNQau1UDH6_ACfQ235HxT-A9RunQS9KfwNE_g9iPX6jnyazwFqlY7U_5TXZipin9zZ/exec'; // Replace with your Google Apps Script URL
+        async function submitPrompt() {
+            const prompt = document.getElementById('userInput').value;
+            const promptSelect = document.getElementById('promptSelect');
+            const selectedPrompt = promptSelect.options[promptSelect.selectedIndex].value;
+            const fullPrompt = selectedPrompt + " " + prompt; // Combine selected prompt and user input
+            const url = 'https://script.google.com/macros/s/AKfycbwNQau1UDH6_ACfQ235HxT-A9RunQS9KfwNE_g9iPX6jnyazwFqlY7U_5TXZipin9zZ/exec'; // Use your correct URL
 
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ prompt: fullPrompt }) // Ensure this structure matches what your Apps Script expects
-        });
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: fullPrompt }) // Ensure this structure matches what your Apps Script expects
+                });
 
-        if (response.ok) {
-            const result = await response.json();
-            if (result.result === 'success') {
-                document.getElementById('messageContainer').innerHTML = '<div class="success-message">Prompt submitted successfully!</div>';
-                document.getElementById('userInput').value = ''; // Clear the input
-                promptSelect.selectedIndex = 0; // Reset dropdown
-            } else {
-                throw new Error(result.message || 'Failed to submit prompt.');
+                if (response.ok) {
+                    const result = await response.json();
+                    document.getElementById('messageContainer').innerHTML = '<div class="success-message">Prompt submitted successfully!</div>';
+                    document.getElementById('userInput').value = ''; // Clear the input
+                    promptSelect.selectedIndex = 0; // Reset dropdown
+                } else {
+                    throw new Error('Error submitting prompt: ' + response.statusText);
+                }
+            } catch (error) {
+                document.getElementById('messageContainer').innerHTML = `<div class="error-message">${error.message}</div>`;
             }
-        } else {
-            throw new Error('Error submitting prompt:P: ' + response.statusText);
         }
-    } catch (error) {
-        document.getElementById('messageContainer').innerHTML = `<div class="error-message">${error.message}</div>`;
-    }
-}
-
     </script>
 </body>
 </html>
