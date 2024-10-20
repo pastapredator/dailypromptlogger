@@ -33,7 +33,7 @@
         }
         button {
             padding: 10px 20px;
-            background-color: blue; /* Change button color to pink */
+            background-color: pink; /* Changed button to pink */
             color: white;
             border: none;
             border-radius: 5px;
@@ -41,7 +41,7 @@
             transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #ff69b4; /* Lighter pink on hover */
+            background-color: #ff66a3;
         }
         .message {
             margin-top: 10px;
@@ -85,28 +85,19 @@
             const promptSelect = document.getElementById('promptSelect');
             const selectedPrompt = promptSelect.options[promptSelect.selectedIndex].value;
             const fullPrompt = selectedPrompt + " " + prompt; // Combine selected prompt and user input
-
-            console.log('Full prompt to be sent:', fullPrompt); // Log the full prompt
-
-            const url = 'https://script.google.com/macros/s/AKfycbwNQau1UDH6_ACfQ235HxT-A9RunQS9KfwNE_g9iPX6jnyazwFqlY7U_5TXZipin9zZ/exec'; // Replace with your Google Apps Script URL
+            const url = 'YOUR_GOOGLE_APPS_SCRIPT_URL'; // Replace with your Google Apps Script URL
 
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    body: JSON.stringify({ prompt: fullPrompt }) // Removed Content-Type
+                    mode: 'no-cors', // Added no-cors to avoid CORS issues
+                    body: JSON.stringify({ prompt: fullPrompt })
                 });
 
-                const result = await response.json();
-                console.log('Response from Google Apps Script:', result); // Log the response
-
                 if (response.ok) {
-                    if (result.result === 'success') {
-                        document.getElementById('messageContainer').innerHTML = '<div class="success-message">Prompt submitted successfully!</div>';
-                        document.getElementById('userInput').value = ''; // Clear the input
-                        promptSelect.selectedIndex = 0; // Reset dropdown
-                    } else {
-                        throw new Error(result.message || 'Failed to submit prompt.');
-                    }
+                    document.getElementById('messageContainer').innerHTML = '<div class="success-message">Prompt submitted successfully!</div>';
+                    document.getElementById('userInput').value = ''; // Clear the input
+                    promptSelect.selectedIndex = 0; // Reset dropdown
                 } else {
                     throw new Error('Error submitting prompt: ' + response.statusText);
                 }
