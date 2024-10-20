@@ -33,7 +33,7 @@
         }
         button {
             padding: 10px 20px;
-            background-color: blue;
+            background-color: red;
             color: white;
             border: none;
             border-radius: 5px;
@@ -80,34 +80,40 @@
     </form>
 
     <script>
-        async function submitPrompt() {
-            const prompt = document.getElementById('userInput').value;
-            const promptSelect = document.getElementById('promptSelect');
-            const selectedPrompt = promptSelect.options[promptSelect.selectedIndex].value;
-            const fullPrompt = selectedPrompt + " " + prompt; // Combine selected prompt and user input
-            const url = 'https://script.google.com/macros/s/AKfycbwNQau1UDH6_ACfQ235HxT-A9RunQS9KfwNE_g9iPX6jnyazwFqlY7U_5TXZipin9zZ/exec'; // Use your correct URL
+     <script>
+    async function submitPrompt() {
+        const prompt = document.getElementById('userInput').value;
+        const promptSelect = document.getElementById('promptSelect');
+        const selectedPrompt = promptSelect.options[promptSelect.selectedIndex].value;
+        const fullPrompt = selectedPrompt + " " + prompt;
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ prompt: fullPrompt }) // Ensure this structure matches what your Apps Script expects
-                });
+        // Proxy the request via a CORS-Anywhere server
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const url = 'https://script.google.com/macros/s/AKfycbwNQau1UDH6_ACfQ235HxT-A9RunQS9KfwNE_g9iPX6jnyazwFqlY7U_5TXZipin9zZ/exec';
 
-                if (response.ok) {
-                    const result = await response.json();
-                    document.getElementById('messageContainer').innerHTML = '<div class="success-message">Prompt submitted successfully!</div>';
-                    document.getElementById('userInput').value = ''; // Clear the input
-                    promptSelect.selectedIndex = 0; // Reset dropdown
-                } else {
-                    throw new Error('Error submitting prompt: ' + response.statusText);
-                }
-            } catch (error) {
-                document.getElementById('messageContainer').innerHTML = `<div class="error-message">${error.message}</div>`;
+        try {
+            const response = await fetch(proxyUrl + url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt: fullPrompt })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('messageContainer').innerHTML = '<div class="success-message">Prompt submitted successfully!</div>';
+                document.getElementById('userInput').value = ''; // Clear the input
+                promptSelect.selectedIndex = 0; // Reset dropdown
+            } else {
+                throw new Error('Error submitting prompt: ' + response.statusText);
             }
+        } catch (error) {
+            document.getElementById('messageContainer').innerHTML = `<div class="error-message">${error.message}</div>`;
         }
+    }
+</script>
+
     </script>
 </body>
 </html>
